@@ -1,5 +1,4 @@
-urllib
 pandas
 numpy
 ipython
-
+beautifulsoup4
