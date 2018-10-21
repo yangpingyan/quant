@@ -1,0 +1,5 @@
+urllib
+pandas
+numpy
+ipython
+
