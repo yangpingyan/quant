@@ -2,6 +2,5 @@ pandas
 numpy
 ipython
 beautifulsoup4
-scrapy
 requests
 easyutils
