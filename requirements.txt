@@ -4,3 +4,5 @@ ipython
 beautifulsoup4
 requests
 easyutils
+tushare
+openpyxl
