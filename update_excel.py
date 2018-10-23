@@ -3,6 +3,10 @@
 # @Time : 2018/10/23 17:27 
 # @Author : yangpingyan@gmail.com
 import argparse
+import mimetypes
+import os
+import smtplib
+import time
 from datetime import datetime
 import tushare as ts
 import json
@@ -10,6 +14,12 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.chart import LineChart, Reference
 from openpyxl.chart.axis import DateAxis
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+from email.mime.base import MIMEBase
+from email.mime.application import MIMEApplication
+from email import encoders
 
 
 def file2dict(path):
@@ -28,7 +38,8 @@ def get_zz500():
     price = df.at[0, 'price']
     return float(price)
 
-def modify1002excel(filename='c:/1.xlsx', assets=None, fundunit=None):
+
+def modify1002excel(filename, assets, fundunit):
     wb = load_workbook(filename=filename)
     ws = wb['基金资产明细']
     nrows = len(list(ws.rows))
@@ -77,6 +88,69 @@ def modify1002excel(filename='c:/1.xlsx', assets=None, fundunit=None):
     return 0
 
 
+def sendmail(filename='c:/1.xlsx', receiver=['iyangpingyan@icloud.com'], ccreceiver=[], subject="擎天柱基金资产净值明细表",
+             pwfile='./emailpanna.json'):
+    mailinfo = file2dict(pwfile)
+    sender = mailinfo['sender']
+    smtpserver = mailinfo['smtpserver']
+    username = mailinfo['username']
+    password = mailinfo['password']
+
+    # Create message container - the correct MIME type is multipart/alternative.
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ';'.join(receiver)
+    msg['Cc'] = ';'.join(ccreceiver)
+    # 定义发送时间（不定义的可能有的邮件客户端会不显示发送时间）
+    msg['date'] = time.strftime('%a, %d %b %Y %H:%M:%S %z')
+
+    # Create the body of the message (a plain-text and an HTML version).
+    text = "你好，\n    附件是擎天柱基金资产净值明细表，请查收。"
+    html = """\  
+    <html>  
+      <head></head>  
+      <body>  
+        <p>Hi!<br>  
+           How are you?<br>  
+           Here is the <a href="http://www.python.org">link</a> you wanted.  
+        </p>  
+      </body>  
+    </html>  
+    """
+
+    # Record the MIME types of both parts - text/plain and text/html.
+    part1 = MIMEText(text, 'plain')
+    part2 = MIMEText(html, 'html')
+    msg.attach(part1)
+    # msg.attach(part2)
+
+    basename = os.path.basename(filename)
+    ctype, encoding = mimetypes.guess_type(filename)
+    if ctype is None or encoding is not None:
+        # No guess could be made, or the file is encoded (compressed), so
+        # use a generic bag-of-bits type.
+        ctype = 'application/octet-stream'
+        print("none.......")
+    maintype, subtype = ctype.split('/', 1)
+    fp = open(filename, 'rb')
+    part3 = MIMEBase(maintype, subtype)
+    part3.set_payload(fp.read())
+    encoders.encode_base64(part3)
+    part3.add_header('Content-Disposition', 'attachment', filename=('gbk', '', basename))
+    msg.attach(part3)
+
+    try:
+        smtp = smtplib.SMTP()
+        smtp.connect(smtpserver)
+        smtp.login(username, password)
+        smtp.sendmail(sender, receiver + ccreceiver, msg.as_string())
+        smtp.quit()
+
+    except Exception as e:
+        print(str(e))
+
+
 def parse_args(pargs=None):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -104,7 +178,6 @@ if __name__ == '__main__':
         assets = args.assets
 
     print("assets={:.2f}, fundunit={:.2f}".format(assets, fundunit))
-
 
     retexcel = modify1002excel(filename=filename, assets=assets, fundunit=fundunit)
 
