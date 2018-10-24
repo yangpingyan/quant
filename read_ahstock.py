@@ -74,6 +74,7 @@ class ReadStockAH():
         return str(random.randint(start, end))
 
     def read_stock_data(self, code_list, grep_str, df):
+        print('Reading stock data...')
         code = ",".join(code_list)
         url = self.stock_api + code
         response = urllib.request.urlopen(url)
@@ -85,7 +86,6 @@ class ReadStockAH():
             df[stock[0]] = stock
 
         df = df.T
-        print(df)
         return df
 
     def get_ahrate(self):
@@ -111,11 +111,13 @@ class ReadStockAH():
     def get_buylist(self):
         df = self.get_ahrate()
         df.sort_values(by='ahrate', ascending=False, inplace=True)
-        buylist = df[df['ahrate']>1.0]['acode'].tolist()
+        df['code'] = df['acode'].map(lambda x: x[-6:])
+        buylist = df[df['ahrate']>1.0]['code'].tolist()
 
         return buylist
 
 
-# In[]
 
-
+if __name__ == '__main__':
+    buylist = ReadStockAH().get_buylist()
+    print(buylist)

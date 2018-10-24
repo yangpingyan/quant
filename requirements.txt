@@ -6,3 +6,4 @@ requests
 easyutils
 tushare
 openpyxl
+easytrader
