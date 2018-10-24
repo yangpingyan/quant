@@ -85,6 +85,7 @@ class ReadStockAH():
             df[stock[0]] = stock
 
         df = df.T
+        print(df)
         return df
 
     def get_ahrate(self):
@@ -104,13 +105,17 @@ class ReadStockAH():
         self.ahstocks_df['aprice'] = self.ahstocks_df['aprice'].astype(float)
         self.ahstocks_df['hprice'] = self.ahstocks_df['hprice'].astype(float)
         self.ahstocks_df['ahrate'] = self.ahstocks_df['hprice'] / self.ahstocks_df['aprice'] * hkdcny
-        self.ahstocks_df.sort_values(by='ahrate', ascending=False, inplace=True)
 
         return self.ahstocks_df
+
+    def get_buylist(self):
+        df = self.get_ahrate()
+        df.sort_values(by='ahrate', ascending=False, inplace=True)
+        buylist = df[df['ahrate']>1.0]['acode'].tolist()
+
+        return buylist
 
 
 # In[]
 
-rs = ReadStockAH()
 
-df = rs.get_ahrate()
