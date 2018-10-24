@@ -2,8 +2,6 @@
 # coding: utf-8
 # @Time : 2018/10/24 10:09 
 # @Author : yangpingyan@gmail.com
-
-
 import read_ahstock
 import easytrader
 import warnings
@@ -24,9 +22,26 @@ position = user.position
 for pos in position:
     account.update(dict({pos['证券代码']: pos}))
 
+
 # In[]
-def order_pct_to(buylist, pct=1):
+
+def sell_not_in_list(buylist):
+    for pos in position:
+        stock = pos.get('证券代码', 0)
+        amount = pos.get('股票余额', 0) - 100  # 留100股
+        value = pos.get('市值', 0)
+        if stock not in buylist and value > 20000 and amount > 0:
+            df = ts.get_realtime_quotes(stock)
+            price = float(df.at[0, 'bid'])
+            # user.sell(stock,price, amount )
+            print("sell", stock, price, amount)
+            time.sleep(0.3)
+
+
+def order_pct_to(buylist, pct=0.8):
     '''买卖buylist中的股票，使所有股票占总资产的pct百分比。 各股票市值均等，考虑到佣金，交易额小于2万的不操作'''
+    if len(buylist) < 1:
+        return
     stock_nums = len(buylist)
     money = account['总资产'] * pct / stock_nums
     for stock in buylist:
@@ -36,28 +51,14 @@ def order_pct_to(buylist, pct=1):
         if buy_money > 20000:
             df = ts.get_realtime_quotes(stock)
             price = float(df.at[0, 'ask'])
-
             amount = buy_money / price
             amount = int(amount / 100) * 100
             # user.buy(stock, price, amount)
             print("buy", stock, price, amount)
-
-        time.sleep(0.3)
-
-def sell_not_in_list(buylist):
-    for pos in position:
-        stock = pos.get('证券代码', 0)
-        amount = pos.get('可用余额', 0)
-        if stock not in buylist and stock != 0 and amount > 0:
-            df = ts.get_realtime_quotes(stock)
-            price = float(df.at[0, 'bid'])
-            # user.sell(stock,price, amount )
-            print("sell", stock, price, amount)
-
+            time.sleep(0.3)
 
 
 buylist = read_ahstock.ReadStockAH().get_buylist()
-
 sell_not_in_list(buylist)
 order_pct_to(buylist)
 

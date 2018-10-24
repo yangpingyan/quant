@@ -171,7 +171,7 @@ if __name__ == '__main__':
     fundunit = 634693.54
     filename = r"C:\Users\Administrator\iCloudDrive\擎天柱基金\擎天柱基金.xlsx"
     # pwfile = './emailpanna.json'
-    assets = 580000.0
+    assets = 579155.46
     args = None
     args = parse_args(args)
     if args.assets:
