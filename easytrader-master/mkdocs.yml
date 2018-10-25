@@ -1,8 +1,0 @@
-site_name: easytrader
-pages:
-- [index.md, Home]
-- [install.md, 安装]
-- [usage.md, 使用]
-- [help.md, 常见问题]
-- [other/xueqiu.md, 其他, '雪球模拟组合说明']
-theme: readthedocs

@@ -1,7 +1,0 @@
-[run]
-branch = True
-include = easytrader/*
-omit = tests/*
-
-[report]
-fail_under = -1 
