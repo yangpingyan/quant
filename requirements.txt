@@ -6,4 +6,4 @@ requests
 easyutils
 tushare
 openpyxl
-easytrader
+pywinauto==0.6.4
