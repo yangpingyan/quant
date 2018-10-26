@@ -176,6 +176,10 @@ if __name__ == '__main__':
     args = parse_args(args)
     if args.assets:
         assets = args.assets
+    else:
+        str = input("基金净资产是：")
+        #        str = '192200'
+        assets = float(str)
 
     print("assets={:.2f}, fundunit={:.2f}".format(assets, fundunit))
 

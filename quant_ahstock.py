@@ -9,7 +9,7 @@ import tushare as ts
 import pandas as pd
 import time
 
-easytrader.
+
 pd.set_option('display.max_columns', 50)
 # Suppress warnings
 warnings.filterwarnings('ignore')
@@ -34,7 +34,7 @@ def sell_not_in_list(buylist):
         if stock not in buylist and value > 20000 and amount > 0:
             df = ts.get_realtime_quotes(stock)
             price = float(df.at[0, 'bid'])
-            # user.sell(stock,price, amount )
+            user.sell(stock,price, amount )
             print("sell", stock, price, amount)
             time.sleep(0.3)
 
@@ -55,7 +55,7 @@ def order_pct_to(buylist, pct=0.8):
             buy_money = -buy_money
             amount = buy_money / price
             amount = int(amount / 100) * 100
-            # user.sell(stock, price, amount)
+            user.sell(stock, price, amount)
             print("sell", stock, price, amount)
             time.sleep(0.3)
 
@@ -68,7 +68,7 @@ def order_pct_to(buylist, pct=0.8):
             price = float(df.at[0, 'ask'])
             amount = buy_money / price
             amount = int(amount / 100) * 100
-            # user.buy(stock, price, amount)
+            user.buy(stock, price, amount)
             print("buy", stock, price, amount)
             time.sleep(0.3)
 
@@ -80,8 +80,8 @@ sell_not_in_list(buylist)
 order_pct_to(buylist)
 
 # In[]
-buylist = ['601318', '000001', '000002']
-print('buylist :', buylist)
-sell_not_in_list(buylist)
-order_pct_to(buylist)
+# buylist = ['601318', '000001', '000002']
+# print('buylist :', buylist)
+# sell_not_in_list(buylist)
+# order_pct_to(buylist)
 
