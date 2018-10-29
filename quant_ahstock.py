@@ -8,14 +8,18 @@ import warnings
 import tushare as ts
 import pandas as pd
 import time
-
+import os
 
 pd.set_option('display.max_columns', 50)
 # Suppress warnings
 warnings.filterwarnings('ignore')
 print("自动交易时请禁止屏幕缩放")
+
+ths_exe = r'C:\同花顺软件\同花顺\xiadan.exe'
+# os.system(ths_exe)
+
 user = easytrader.use('ths')
-user.connect(r'C:\同花顺软件\同花顺\xiadan.exe')
+user.connect(ths_exe)
 
 # 获取帐户信息
 account = user.balance
