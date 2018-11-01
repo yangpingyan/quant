@@ -13,6 +13,9 @@ import os
 pd.set_option('display.max_columns', 50)
 # Suppress warnings
 warnings.filterwarnings('ignore')
+# 获取买入列表
+buylist = read_ahstock.ReadStockAH().get_buylist()
+
 print("自动交易时请禁止屏幕缩放")
 
 ths_exe = r'C:\同花顺软件\同花顺\xiadan.exe'
@@ -38,8 +41,8 @@ def sell_not_in_list(buylist):
         if stock not in buylist and value > 20000 and amount > 0:
             df = ts.get_realtime_quotes(stock)
             price = float(df.at[0, 'bid'])
-            user.sell(stock,price, amount )
-            print("sell", stock, price, amount)
+            print("selling", stock, price, amount)
+            user.sell(stock, price, amount)
             time.sleep(0.3)
 
 
@@ -59,10 +62,11 @@ def order_pct_to(buylist, pct=0.8):
             buy_money = -buy_money
             amount = buy_money / price
             amount = int(amount / 100) * 100
+            print("selling", stock, price, amount)
             user.sell(stock, price, amount)
-            print("sell", stock, price, amount)
-            time.sleep(0.3)
 
+    # 等待委托成功, 可改成判断委托单状态
+    time.sleep(2)
     # 再买入buylist中的股票
     for stock in buylist:
         stock_value = account.get(stock, dict()).get('市值', 0)
@@ -72,14 +76,12 @@ def order_pct_to(buylist, pct=0.8):
             price = float(df.at[0, 'ask'])
             amount = buy_money / price
             amount = int(amount / 100) * 100
+            print("buying", stock, price, amount)
             user.buy(stock, price, amount)
-            print("buy", stock, price, amount)
-            time.sleep(0.3)
 
 
 
-buylist = read_ahstock.ReadStockAH().get_buylist()
-print('buylist :', buylist)
+
 sell_not_in_list(buylist)
 order_pct_to(buylist)
 
@@ -88,4 +90,3 @@ order_pct_to(buylist)
 # print('buylist :', buylist)
 # sell_not_in_list(buylist)
 # order_pct_to(buylist)
-

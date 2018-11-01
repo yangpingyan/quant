@@ -112,10 +112,10 @@ class ReadStockAH():
         df = self.get_ahrate()
         df.sort_values(by='ahrate', ascending=False, inplace=True)
         df['code'] = df['acode'].map(lambda x: x[-6:])
-        buylist = df[df['ahrate']>1.0]['code'].tolist()
+        buylist = df[df['ahrate'] > 1.0]
+        print(buylist)
 
-        return buylist
-
+        return buylist['code'].tolist()
 
 
 if __name__ == '__main__':
